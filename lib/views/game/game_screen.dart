@@ -26,6 +26,20 @@ class GameScreen extends StatelessWidget {
     );
   }
 
+  Color _determineBorderColor(String value, GameController gameController) {
+    if (value == gameController.model.player1Mark) {
+      return gameController.model.player1Color;
+    } else if (value == gameController.model.player2Mark) {
+      return gameController.model.player2Color;
+    }
+
+    return Colors.transparent;
+  }
+
+  Color _determineTextColor(String value, GameController gameController) {
+    return _determineBorderColor(value, gameController);
+  }
+
   @override
   Widget build(BuildContext context) {
     final gameController = Provider.of<GameController>(context);
@@ -117,20 +131,6 @@ class GameScreen extends StatelessWidget {
     );
   }
 
-  Color _determineBorderColor(String value, GameController gameController) {
-    if (value == gameController.model.player1Mark) {
-      return gameController.model.player1Color;
-    } else if (value == gameController.model.player2Mark) {
-      return gameController.model.player2Color;
-    }
-
-    return Colors.transparent;
-  }
-
-  Color _determineTextColor(String value, GameController gameController) {
-    return _determineBorderColor(value, gameController);
-  }
-
   Widget _buildControlButtons(
       GameController gameController, BuildContext context) {
     return Padding(
@@ -140,7 +140,11 @@ class GameScreen extends StatelessWidget {
         children: [
           IconButton(
             icon: const Icon(Icons.undo),
-            onPressed: () {},
+            onPressed: gameController.model.previousBoards.isNotEmpty
+                ? () {
+                    gameController.undo();
+                  }
+                : null,
           )
         ],
       ),

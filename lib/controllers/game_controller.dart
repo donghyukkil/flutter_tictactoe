@@ -32,4 +32,19 @@ class GameController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void undo() {
+    if (model.previousBoards.isNotEmpty) {
+      if (model.isPlayer1Turn && model.player2UndoCount > 0) {
+        model.player2UndoCount -= 1;
+        model.isPlayer1Turn = !model.isPlayer1Turn;
+      } else if (!model.isPlayer1Turn && model.player1UndoCount > 0) {
+        model.player1UndoCount -= 1;
+        model.isPlayer1Turn = !model.isPlayer1Turn;
+      }
+      model.undo();
+
+      notifyListeners();
+    }
+  }
 }

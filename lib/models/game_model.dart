@@ -55,6 +55,14 @@ class GameModel {
     }
   }
 
+  void undo() {
+    if (previousBoards.isNotEmpty) {
+      board = previousBoards.removeLast();
+      gameOver = false;
+      winner = null;
+    }
+  }
+
   void checkWinCondition() {
     bool hasWinningSequence(int startRow, int startCol, int dRow, int dCol) {
       String firstCell = board[startRow * boardSize + startCol];
