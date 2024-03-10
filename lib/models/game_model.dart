@@ -5,7 +5,7 @@ class GameModel {
   int boardSize;
   int winCondition;
   List<String> board;
-  bool isPlayer1Turn;
+  late bool isPlayer1Turn;
   String player1Mark;
   Color player1Color;
   String player2Mark;
@@ -25,9 +25,26 @@ class GameModel {
     required this.player2Mark,
     required this.player2Color,
     String firstPlayer = "Random",
-  })  : board = List.filled(boardSize * boardSize, ''),
-        isPlayer1Turn = firstPlayer == "Player 1" ||
-            (firstPlayer == "Random" && Random().nextBool());
+  }) : board = List.filled(boardSize * boardSize, '') {
+    if (firstPlayer == "Player 1") {
+      isPlayer1Turn = true;
+    } else if (firstPlayer == "Player 2") {
+      isPlayer1Turn = false;
+    } else {
+      isPlayer1Turn = Random().nextBool();
+    }
+  }
+
+  static GameModel defaultModel() {
+    return GameModel(
+      boardSize: 3,
+      winCondition: 3,
+      player1Mark: 'X',
+      player1Color: Colors.blue,
+      player2Mark: 'O',
+      player2Color: Colors.red,
+    );
+  }
 
   void markTile(int index) {
     if (board[index].isEmpty && !gameOver) {
@@ -39,104 +56,38 @@ class GameModel {
   }
 
   void checkWinCondition() {
-    List<List<String>> boardGrid = [];
+    bool hasWinningSequence(int startRow, int startCol, int dRow, int dCol) {
+      String firstCell = board[startRow * boardSize + startCol];
+      if (firstCell.isEmpty) {
+        return false;
+      }
 
-    for (int i = 0; i < boardSize; i++) {
-      boardGrid.add(board.sublist(i * boardSize, (i + 1) * boardSize));
-    }
-
-    for (int row = 0; row < boardSize; row++) {
-      for (int col = 0; col <= boardSize - winCondition; col++) {
-        String firstCell = boardGrid[row][col];
-        if (firstCell.isNotEmpty) {
-          bool isWinningSequence = true;
-
-          for (int offset = 1; offset < winCondition; offset++) {
-            if (boardGrid[row][col + offset] != firstCell) {
-              isWinningSequence = false;
-
-              break;
-            }
-          }
-
-          if (isWinningSequence) {
-            gameOver = true;
-            winner = firstCell;
-
-            return;
-          }
+      for (int i = 1; i < winCondition; ++i) {
+        int row = startRow + dRow * i;
+        int col = startCol + dCol * i;
+        if (board[row * boardSize + col] != firstCell) {
+          return false;
         }
       }
+
+      return true;
     }
 
-    for (int col = 0; col < boardSize; col++) {
-      for (int row = 0; row <= boardSize - winCondition; row++) {
-        String firstCell = boardGrid[row][col];
-
-        if (firstCell.isNotEmpty) {
-          bool isWinningSequence = true;
-
-          for (int offset = 1; offset < winCondition; offset++) {
-            if (boardGrid[row + offset][col] != firstCell) {
-              isWinningSequence = false;
-
-              break;
-            }
-          }
-          if (isWinningSequence) {
-            gameOver = true;
-            winner = firstCell;
-
-            return;
-          }
-        }
-      }
-    }
-
-    for (int row = 0; row <= boardSize - winCondition; row++) {
-      for (int col = 0; col <= boardSize - winCondition; col++) {
-        String firstCell = boardGrid[row][col];
-
-        if (firstCell.isNotEmpty) {
-          bool isWinningSequence = true;
-
-          for (int offset = 1; offset < winCondition; offset++) {
-            if (boardGrid[row + offset][col + offset] != firstCell) {
-              isWinningSequence = false;
-
-              break;
-            }
-          }
-          if (isWinningSequence) {
-            gameOver = true;
-            winner = firstCell;
-
-            return;
-          }
-        }
-      }
-    }
-
-    for (int row = 0; row <= boardSize - winCondition; row++) {
-      for (int col = winCondition - 1; col < boardSize; col++) {
-        String firstCell = boardGrid[row][col];
-
-        if (firstCell.isNotEmpty) {
-          bool isWinningSequence = true;
-
-          for (int offset = 1; offset < winCondition; offset++) {
-            if (boardGrid[row + offset][col - offset] != firstCell) {
-              isWinningSequence = false;
-
-              break;
-            }
-          }
-          if (isWinningSequence) {
-            gameOver = true;
-            winner = firstCell;
-
-            return;
-          }
+    for (int row = 0; row < boardSize; ++row) {
+      for (int col = 0; col < boardSize; ++col) {
+        if (col <= boardSize - winCondition &&
+                hasWinningSequence(row, col, 0, 1) ||
+            row <= boardSize - winCondition &&
+                hasWinningSequence(row, col, 1, 0) ||
+            row <= boardSize - winCondition &&
+                col <= boardSize - winCondition &&
+                hasWinningSequence(row, col, 1, 1) ||
+            row <= boardSize - winCondition &&
+                col >= winCondition - 1 &&
+                hasWinningSequence(row, col, 1, -1)) {
+          gameOver = true;
+          winner = board[row * boardSize + col];
+          return;
         }
       }
     }

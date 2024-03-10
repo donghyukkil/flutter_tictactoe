@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:provider/provider.dart';
 
 import '../game/game_screen.dart';
 import '../../models/game_model.dart';
@@ -24,7 +25,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
     Colors.blue,
     Colors.red,
     Colors.green,
-    Colors.yellow
+    Colors.yellow,
   ];
   final List<String> marks = ['X', 'O', '△', '■'];
 
@@ -183,13 +184,13 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                         ? ['Player 1', 'Player 2'][Random().nextInt(2)]
                         : firstPlayer,
                   );
-                  GameController gameController =
-                      GameController(model: gameModel);
-                  Navigator.push(
-                    context,
+                  Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          GameScreen(gameController: gameController),
+                          ChangeNotifierProvider<GameController>(
+                        create: (_) => GameController(model: gameModel),
+                        child: const GameScreen(),
+                      ),
                     ),
                   );
                 },

@@ -1,73 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../controllers/game_controller.dart';
 
-class GameScreen extends StatefulWidget {
-  final GameController gameController;
+class GameScreen extends StatelessWidget {
+  const GameScreen({Key? key}) : super(key: key);
 
-  const GameScreen({Key? key, required this.gameController}) : super(key: key);
-
-  @override
-  _GameScreenState createState() => _GameScreenState();
-}
-
-class _GameScreenState extends State<GameScreen> {
-  @override
-  void initState() {
-    super.initState();
-    widget.gameController.onStateChanged = updateUI;
-  }
-
-  @override
-  void dispose() {
-    widget.gameController.onStateChanged = null;
-    super.dispose();
-  }
-
-  void updateUI() {
-    setState(() {});
-    if (widget.gameController.model.gameOver) {
-      String message = '';
-
-      if (widget.gameController.model.winner == 'Draw') {
-        message = '무승부입니다.';
-      } else {
-        message = '${widget.gameController.model.winner}의 승리입니다.';
-      }
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('게임 종료'),
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('확인'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  void _showUndoLimitReachedAlert() {
+  void _showWinDialog(BuildContext context, String winner) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('알림'),
-          content: const Text('더 이상 무르기를 사용할 수 없습니다.'),
+          title: const Text('Game Over'),
+          content: Text(winner == 'Draw' ? 'It\'s a Draw!' : '$winner Wins!'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('확인'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -75,22 +26,16 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Color determineBorderColor(String value) {
-    if (value == widget.gameController.model.player1Mark) {
-      return widget.gameController.model.player1Color;
-    } else if (value == widget.gameController.model.player2Mark) {
-      return widget.gameController.model.player2Color;
-    }
-
-    return Colors.transparent;
-  }
-
-  Color determineTextColor(String value) {
-    return determineBorderColor(value);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final gameController = Provider.of<GameController>(context);
+
+    if (gameController.model.gameOver && gameController.model.winner != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showWinDialog(context, gameController.model.winner!);
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tic Tac Toe Game'),
@@ -98,19 +43,18 @@ class _GameScreenState extends State<GameScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          _buildPlayerInfoSection(),
+          _buildPlayerInfoSection(gameController),
           Expanded(
-            child: _buildGameBoard(),
+            child: _buildGameBoard(gameController),
           ),
-          _buildControlButtons(),
+          _buildControlButtons(gameController, context),
         ],
       ),
     );
   }
 
-  Widget _buildPlayerInfoSection() {
-    final model = widget.gameController.model;
-
+  Widget _buildPlayerInfoSection(GameController gameController) {
+    final model = gameController.model;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -137,31 +81,32 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildGameBoard() {
+  Widget _buildGameBoard(GameController gameController) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: widget.gameController.model.boardSize,
+        crossAxisCount: gameController.model.boardSize,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
         childAspectRatio: 1,
       ),
-      itemCount: widget.gameController.model.board.length,
+      itemCount: gameController.model.board.length,
       itemBuilder: (context, index) {
-        String value = widget.gameController.model.board[index];
-
+        String value = gameController.model.board[index];
         return InkWell(
-          onTap: () => widget.gameController.markTile(index),
+          onTap: () => gameController.markTile(index),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.lightBlue.shade100,
-              border: Border.all(color: determineBorderColor(value), width: 2),
+              border: Border.all(
+                  color: _determineBorderColor(value, gameController),
+                  width: 2),
             ),
             child: Center(
               child: Text(
                 value,
                 style: TextStyle(
-                  color: determineTextColor(value),
+                  color: _determineTextColor(value, gameController),
                   fontSize: 32,
                 ),
               ),
@@ -172,7 +117,22 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildControlButtons() {
+  Color _determineBorderColor(String value, GameController gameController) {
+    if (value == gameController.model.player1Mark) {
+      return gameController.model.player1Color;
+    } else if (value == gameController.model.player2Mark) {
+      return gameController.model.player2Color;
+    }
+
+    return Colors.transparent;
+  }
+
+  Color _determineTextColor(String value, GameController gameController) {
+    return _determineBorderColor(value, gameController);
+  }
+
+  Widget _buildControlButtons(
+      GameController gameController, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
@@ -180,14 +140,7 @@ class _GameScreenState extends State<GameScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.undo),
-            onPressed: () {
-              if ((widget.gameController.model.isPlayer1Turn &&
-                      widget.gameController.model.player1UndoCount == 0) ||
-                  (!widget.gameController.model.isPlayer1Turn &&
-                      widget.gameController.model.player2UndoCount == 0)) {
-                _showUndoLimitReachedAlert();
-              } else {}
-            },
+            onPressed: () {},
           )
         ],
       ),
