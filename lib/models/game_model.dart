@@ -13,6 +13,10 @@ class GameModel {
   bool gameOver = false;
   String? winner;
 
+  int player1UndoCount = 3;
+  int player2UndoCount = 3;
+  List<List<String>> previousBoards = [];
+
   GameModel({
     required this.boardSize,
     required this.winCondition,
@@ -27,6 +31,7 @@ class GameModel {
 
   void markTile(int index) {
     if (board[index].isEmpty && !gameOver) {
+      previousBoards.add(List.from(board));
       board[index] = isPlayer1Turn ? player1Mark : player2Mark;
       checkWinCondition();
       isPlayer1Turn = !isPlayer1Turn;
