@@ -12,7 +12,6 @@ class GameModel {
   Color player2Color;
   bool gameOver = false;
   String? winner;
-
   int player1UndoCount = 3;
   int player2UndoCount = 3;
   List<List<String>> previousBoards = [];
@@ -35,16 +34,7 @@ class GameModel {
     }
   }
 
-  static GameModel defaultModel() {
-    return GameModel(
-      boardSize: 3,
-      winCondition: 3,
-      player1Mark: 'X',
-      player1Color: Colors.blue,
-      player2Mark: 'O',
-      player2Color: Colors.red,
-    );
-  }
+  static GameModel defaultModel() => GameModel.defaultModel();
 
   void markTile(int index) {
     if (board[index].isEmpty && !gameOver) {

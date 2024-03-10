@@ -6,6 +6,42 @@ import '../../controllers/game_controller.dart';
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    final gameController = Provider.of<GameController>(context);
+
+    if (gameController.model.gameOver && gameController.model.winner != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showWinDialog(context, gameController.model.winner!);
+      });
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tic Tac Toe Game'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          _buildPlayerInfoSection(gameController),
+          _buildRemainingTimeSection(gameController),
+          Expanded(
+            child: _buildGameBoard(gameController),
+          ),
+          _buildControlButtons(gameController, context),
+        ],
+      ),
+    );
+  }
+
   void _showWinDialog(BuildContext context, String winner) {
     showDialog(
       context: context,
@@ -26,49 +62,21 @@ class GameScreen extends StatelessWidget {
     );
   }
 
-  Color _determineBorderColor(String value, GameController gameController) {
-    if (value == gameController.model.player1Mark) {
-      return gameController.model.player1Color;
-    } else if (value == gameController.model.player2Mark) {
-      return gameController.model.player2Color;
-    }
-
-    return Colors.transparent;
-  }
-
-  Color _determineTextColor(String value, GameController gameController) {
-    return _determineBorderColor(value, gameController);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final gameController = Provider.of<GameController>(context);
-
-    if (gameController.model.gameOver && gameController.model.winner != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showWinDialog(context, gameController.model.winner!);
-      });
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tic Tac Toe Game'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _buildPlayerInfoSection(gameController),
-          Expanded(
-            child: _buildGameBoard(gameController),
-          ),
-          _buildControlButtons(gameController, context),
-        ],
-      ),
+  Widget _buildPlayerInfo(String playerName, String mark, Color color,
+      bool isCurrentTurn, int undoCount) {
+    return Column(
+      children: [
+        Text(playerName + (isCurrentTurn ? " (차례)" : ""),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Text("마크: $mark", style: TextStyle(color: color, fontSize: 16)),
+        Text("남은 무르기: $undoCount", style: const TextStyle(fontSize: 16)),
+      ],
     );
   }
 
   Widget _buildPlayerInfoSection(GameController gameController) {
     final model = gameController.model;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -83,15 +91,13 @@ class GameScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPlayerInfo(String playerName, String mark, Color color,
-      bool isCurrentTurn, int undoCount) {
-    return Column(
-      children: [
-        Text(playerName + (isCurrentTurn ? " (차례)" : ""),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        Text("마크: $mark", style: TextStyle(color: color, fontSize: 16)),
-        Text("남은 무르기: $undoCount", style: const TextStyle(fontSize: 16)),
-      ],
+  Widget _buildRemainingTimeSection(GameController gameController) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        'Remaining Time: ${gameController.remainingSeconds} seconds',
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -107,14 +113,28 @@ class GameScreen extends StatelessWidget {
       itemCount: gameController.model.board.length,
       itemBuilder: (context, index) {
         String value = gameController.model.board[index];
+        Color tileColor =
+            gameController.wasLastMoveAutomatic && value.isNotEmpty
+                ? Colors.amber.shade200
+                : Colors.lightBlue.shade100;
+
+        if (gameController.wasLastMoveAutomatic) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            gameController.resetLastMoveAutomaticFlag();
+          });
+        }
+
         return InkWell(
-          onTap: () => gameController.markTile(index),
+          onTap: () {
+            gameController.markTile(index);
+          },
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.lightBlue.shade100,
+              color: tileColor,
               border: Border.all(
-                  color: _determineBorderColor(value, gameController),
-                  width: 2),
+                color: _determineBorderColor(value, gameController),
+                width: 2,
+              ),
             ),
             child: Center(
               child: Text(
@@ -149,5 +169,19 @@ class GameScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _determineBorderColor(String value, GameController gameController) {
+    if (value == gameController.model.player1Mark) {
+      return gameController.model.player1Color;
+    } else if (value == gameController.model.player2Mark) {
+      return gameController.model.player2Color;
+    }
+
+    return Colors.transparent;
+  }
+
+  Color _determineTextColor(String value, GameController gameController) {
+    return _determineBorderColor(value, gameController);
   }
 }
