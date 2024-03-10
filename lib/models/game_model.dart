@@ -28,7 +28,117 @@ class GameModel {
   void markTile(int index) {
     if (board[index].isEmpty && !gameOver) {
       board[index] = isPlayer1Turn ? player1Mark : player2Mark;
+      checkWinCondition();
       isPlayer1Turn = !isPlayer1Turn;
+    }
+  }
+
+  void checkWinCondition() {
+    List<List<String>> boardGrid = [];
+
+    for (int i = 0; i < boardSize; i++) {
+      boardGrid.add(board.sublist(i * boardSize, (i + 1) * boardSize));
+    }
+
+    for (int row = 0; row < boardSize; row++) {
+      for (int col = 0; col <= boardSize - winCondition; col++) {
+        String firstCell = boardGrid[row][col];
+        if (firstCell.isNotEmpty) {
+          bool isWinningSequence = true;
+
+          for (int offset = 1; offset < winCondition; offset++) {
+            if (boardGrid[row][col + offset] != firstCell) {
+              isWinningSequence = false;
+
+              break;
+            }
+          }
+
+          if (isWinningSequence) {
+            gameOver = true;
+            winner = firstCell;
+
+            return;
+          }
+        }
+      }
+    }
+
+    for (int col = 0; col < boardSize; col++) {
+      for (int row = 0; row <= boardSize - winCondition; row++) {
+        String firstCell = boardGrid[row][col];
+
+        if (firstCell.isNotEmpty) {
+          bool isWinningSequence = true;
+
+          for (int offset = 1; offset < winCondition; offset++) {
+            if (boardGrid[row + offset][col] != firstCell) {
+              isWinningSequence = false;
+
+              break;
+            }
+          }
+          if (isWinningSequence) {
+            gameOver = true;
+            winner = firstCell;
+
+            return;
+          }
+        }
+      }
+    }
+
+    for (int row = 0; row <= boardSize - winCondition; row++) {
+      for (int col = 0; col <= boardSize - winCondition; col++) {
+        String firstCell = boardGrid[row][col];
+
+        if (firstCell.isNotEmpty) {
+          bool isWinningSequence = true;
+
+          for (int offset = 1; offset < winCondition; offset++) {
+            if (boardGrid[row + offset][col + offset] != firstCell) {
+              isWinningSequence = false;
+
+              break;
+            }
+          }
+          if (isWinningSequence) {
+            gameOver = true;
+            winner = firstCell;
+
+            return;
+          }
+        }
+      }
+    }
+
+    for (int row = 0; row <= boardSize - winCondition; row++) {
+      for (int col = winCondition - 1; col < boardSize; col++) {
+        String firstCell = boardGrid[row][col];
+
+        if (firstCell.isNotEmpty) {
+          bool isWinningSequence = true;
+
+          for (int offset = 1; offset < winCondition; offset++) {
+            if (boardGrid[row + offset][col - offset] != firstCell) {
+              isWinningSequence = false;
+
+              break;
+            }
+          }
+          if (isWinningSequence) {
+            gameOver = true;
+            winner = firstCell;
+
+            return;
+          }
+        }
+      }
+    }
+
+    if (!board.contains('')) {
+      gameOver = true;
+      winner = 'Draw';
     }
   }
 }

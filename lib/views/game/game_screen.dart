@@ -26,6 +26,33 @@ class _GameScreenState extends State<GameScreen> {
 
   void updateUI() {
     setState(() {});
+    if (widget.gameController.model.gameOver) {
+      String message = '';
+
+      if (widget.gameController.model.winner == 'Draw') {
+        message = '무승부입니다.';
+      } else {
+        message = '${widget.gameController.model.winner}의 승리입니다.';
+      }
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('게임 종료'),
+            content: Text(message),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('확인'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   Color determineBorderColor(String value) {
@@ -34,6 +61,7 @@ class _GameScreenState extends State<GameScreen> {
     } else if (value == widget.gameController.model.player2Mark) {
       return widget.gameController.model.player2Color;
     }
+
     return Colors.transparent;
   }
 
