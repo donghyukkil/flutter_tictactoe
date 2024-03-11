@@ -15,6 +15,8 @@ class GameModel {
   int player1UndoCount = 3;
   int player2UndoCount = 3;
   List<List<String>> previousBoards = [];
+  List<int> markSequence = [];
+  bool readOnly = false;
 
   GameModel({
     required this.boardSize,
@@ -25,21 +27,42 @@ class GameModel {
     required this.player2Color,
     String firstPlayer = "Random",
   }) : board = List.filled(boardSize * boardSize, '') {
-    if (firstPlayer == "Player 1") {
-      isPlayer1Turn = true;
-    } else if (firstPlayer == "Player 2") {
-      isPlayer1Turn = false;
-    } else {
-      isPlayer1Turn = Random().nextBool();
-    }
+    isPlayer1Turn = firstPlayer == "Player 1"
+        ? true
+        : firstPlayer == "Player 2"
+            ? false
+            : Random().nextBool();
   }
 
-  static GameModel defaultModel() => GameModel.defaultModel();
+  GameModel.fromHistory({
+    required this.boardSize,
+    required this.winCondition,
+    required this.board,
+    required this.markSequence,
+    this.readOnly = false,
+  })  : player1Mark = 'X',
+        player1Color = Colors.blue,
+        player2Mark = 'O',
+        player2Color = Colors.red {
+    isPlayer1Turn = true;
+  }
+
+  static GameModel defaultModel() {
+    return GameModel(
+      boardSize: 3,
+      winCondition: 3,
+      player1Mark: 'X',
+      player1Color: Colors.blue,
+      player2Mark: 'O',
+      player2Color: Colors.red,
+    );
+  }
 
   void markTile(int index) {
     if (board[index].isEmpty && !gameOver) {
       previousBoards.add(List.from(board));
       board[index] = isPlayer1Turn ? player1Mark : player2Mark;
+      markSequence.add(index);
       checkWinCondition();
       isPlayer1Turn = !isPlayer1Turn;
     }

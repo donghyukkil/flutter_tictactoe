@@ -10,13 +10,22 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.yellow,
         title: const Text('Tic Tac Toe'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image.asset('assets/home_screen.png', width: 300),
+            const SizedBox(
+              height: 100,
+            ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.yellow,
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -24,10 +33,14 @@ class HomeScreen extends StatelessWidget {
                       builder: (context) => const GameSettingsScreen()),
                 );
               },
-              child: const Text('게임 시작'),
+              child: const Text('Start'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.yellow,
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -35,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                       builder: (context) => const GameHistoryScreen()),
                 );
               },
-              child: const Text('기록된 게임 보기'),
+              child: const Text('History'),
             ),
           ],
         ),

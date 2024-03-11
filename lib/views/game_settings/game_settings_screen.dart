@@ -34,10 +34,14 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Game Settings'),
+        backgroundColor: Colors.yellow,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(
+              height: 50,
+            ),
             ListTile(
               title: const Text("Board Size"),
               trailing: DropdownButton<int>(
@@ -169,33 +173,37 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                 }).toList(),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  GameModel gameModel = GameModel(
-                    boardSize: boardSize,
-                    winCondition: winCondition,
-                    player1Mark: player1Mark,
-                    player1Color: player1Color,
-                    player2Mark: player2Mark,
-                    player2Color: player2Color,
-                    firstPlayer: firstPlayer == 'Random'
-                        ? ['Player 1', 'Player 2'][Random().nextInt(2)]
-                        : firstPlayer,
-                  );
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ChangeNotifierProvider<GameController>(
-                        create: (_) => GameController(model: gameModel),
-                        child: const GameScreen(),
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Start Game'),
+            const SizedBox(
+              height: 50,
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.yellow,
               ),
+              onPressed: () {
+                GameModel gameModel = GameModel(
+                  boardSize: boardSize,
+                  winCondition: winCondition,
+                  player1Mark: player1Mark,
+                  player1Color: player1Color,
+                  player2Mark: player2Mark,
+                  player2Color: player2Color,
+                  firstPlayer: firstPlayer == 'Random'
+                      ? ['Player 1', 'Player 2'][Random().nextInt(2)]
+                      : firstPlayer,
+                );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ChangeNotifierProvider<GameController>(
+                      create: (_) => GameController(model: gameModel),
+                      child: const GameScreen(),
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Start Game'),
             ),
           ],
         ),

@@ -11,6 +11,7 @@ class GameController extends ChangeNotifier {
   static const int turnDurationSeconds = 15;
   bool _wasLastMoveAutomatic = false;
   int _remainingSeconds = turnDurationSeconds;
+  Function? onGameOver;
 
   bool get wasLastMoveAutomatic => _wasLastMoveAutomatic;
   int get remainingSeconds => _remainingSeconds;
@@ -39,11 +40,16 @@ class GameController extends ChangeNotifier {
       model.previousBoards.add(List.from(model.board));
       model.board[index] =
           model.isPlayer1Turn ? model.player1Mark : model.player2Mark;
+      model.markSequence.add(index);
       model.checkWinCondition();
       model.isPlayer1Turn = !model.isPlayer1Turn;
 
       if (model.gameOver) {
         _countdownTimer?.cancel();
+
+        if (onGameOver != null) {
+          onGameOver!();
+        }
       }
 
       notifyListeners();
@@ -87,6 +93,12 @@ class GameController extends ChangeNotifier {
   }
 
   void _handleTimeUp() {
+    if (model.gameOver) {
+      _countdownTimer?.cancel();
+
+      return;
+    }
+
     List<int> emptyIndices = List.generate(model.board.length, (i) => i)
         .where((i) => model.board[i].isEmpty)
         .toList();
