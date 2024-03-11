@@ -166,7 +166,7 @@ class _GameScreenState extends State<GameScreen> {
       itemCount: gameController.model.board.length,
       itemBuilder: (context, index) {
         String value = gameController.model.board[index];
-        Color tileColor = Colors.yellow;
+        Color tileColor = Colors.white;
         int markOrder = gameController.model.markSequence.indexOf(index) + 1;
 
         return InkWell(
@@ -231,7 +231,7 @@ class _GameScreenState extends State<GameScreen> {
         ? gameController.model.player1Color
         : value == gameController.model.player2Mark
             ? gameController.model.player2Color
-            : Colors.transparent;
+            : Colors.yellow.shade600;
   }
 
   Color _determineTextColor(String value, GameController gameController) {

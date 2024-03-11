@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
                       builder: (context) => const GameSettingsScreen()),
                 );
               },
-              child: const Text('Start'),
+              child: const Text('게임 시작'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                       builder: (context) => const GameHistoryScreen()),
                 );
               },
-              child: const Text('History'),
+              child: const Text('저장된 게임'),
             ),
           ],
         ),

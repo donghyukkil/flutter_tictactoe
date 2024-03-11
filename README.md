@@ -1,16 +1,59 @@
-# flutter_tictactoe
+<p align="center">
+     <img src="./assets/home_screen.png" width="300" height="300">
+</p>
 
-A new Flutter project.
+# 목차
 
-## Getting Started
+- [프로젝트 소개](#프로젝트-소개)
+- [프로젝트 관심사](#프로젝트-관심사)
 
-This project is a starting point for a Flutter application.
+- [기술스택](#기술스택)
+- [연락처](#연락처)
 
-A few resources to get you started if this is your first Flutter project:
+<br>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# 프로젝트 소개
+- Flutter Tic Tac Toe
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  <p align="center">
+     <img src="https://github.com/donghyukkil/flutter_tictactoe/assets/124029691/ab9cf3cd-c532-4431-bdd0-3214b4db41c5" width="200" height="350">
+  </p>
+
+
+<br>
+
+# 프로젝트 관심사
+
+ 
+ <br>
+
+# 기술스택
+
+- Front-end:
+  - Dart, Flutter, Provider
+
+<br>
+
+# 연락처
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/donghyukkil">
+        <img src="https://avatars.githubusercontent.com/u/124029691?v=4" alt="길동혁 프로필" width="100px" height="100px" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <ul>
+        <li><a href="https://github.com/donghyukkil">길동혁</a></li>
+		    <li>asterism90@gmail.com</li>
+	    </ul>
+    </td>
+  </tr>
+</table>
+
+
+
+
