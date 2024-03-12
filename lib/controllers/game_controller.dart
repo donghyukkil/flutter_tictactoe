@@ -40,6 +40,7 @@ class GameController extends ChangeNotifier {
       model.board[index] =
           model.isPlayer1Turn ? model.player1Mark : model.player2Mark;
       model.markSequence.add(index);
+      model.movePlayerSequence.add(model.isPlayer1Turn);
       model.checkWinCondition();
       model.isPlayer1Turn = !model.isPlayer1Turn;
 
@@ -60,18 +61,33 @@ class GameController extends ChangeNotifier {
   }
 
   void undo() {
-    if (model.previousBoards.isNotEmpty) {
-      if (model.isPlayer1Turn && model.player2UndoCount > 0) {
-        model.player2UndoCount -= 1;
-        model.isPlayer1Turn = !model.isPlayer1Turn;
-      } else if (!model.isPlayer1Turn && model.player1UndoCount > 0) {
-        model.player1UndoCount -= 1;
-        model.isPlayer1Turn = !model.isPlayer1Turn;
-      }
+    if (model.previousBoards.isNotEmpty &&
+        model.movePlayerSequence.isNotEmpty) {
+      bool lastMoveByCurrentPlayer =
+          model.movePlayerSequence.last != model.isPlayer1Turn;
 
-      model.undo();
-      notifyListeners();
-      _startTurnTimer();
+      if (lastMoveByCurrentPlayer) {
+        bool wasPlayer1Turn = model.movePlayerSequence.removeLast();
+
+        if ((wasPlayer1Turn && model.player1UndoCount > 0) ||
+            (!wasPlayer1Turn && model.player2UndoCount > 0)) {
+          model.board = model.previousBoards.removeLast();
+          model.markSequence.removeLast();
+          if (wasPlayer1Turn) {
+            model.player1UndoCount--;
+          } else {
+            model.player2UndoCount--;
+          }
+
+          model.isPlayer1Turn = wasPlayer1Turn;
+
+          model.gameOver = false;
+          model.winner = null;
+
+          notifyListeners();
+          _startTurnTimer();
+        }
+      }
     }
   }
 

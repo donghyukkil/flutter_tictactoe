@@ -16,6 +16,7 @@ class GameModel {
   int player2UndoCount = 3;
   List<List<String>> previousBoards = [];
   List<int> markSequence = [];
+  List<bool> movePlayerSequence = [];
   bool readOnly = false;
 
   GameModel({
@@ -56,24 +57,6 @@ class GameModel {
       player2Mark: 'O',
       player2Color: Colors.red,
     );
-  }
-
-  void markTile(int index) {
-    if (board[index].isEmpty && !gameOver) {
-      previousBoards.add(List.from(board));
-      board[index] = isPlayer1Turn ? player1Mark : player2Mark;
-      markSequence.add(index);
-      checkWinCondition();
-      isPlayer1Turn = !isPlayer1Turn;
-    }
-  }
-
-  void undo() {
-    if (previousBoards.isNotEmpty) {
-      board = previousBoards.removeLast();
-      gameOver = false;
-      winner = null;
-    }
   }
 
   void checkWinCondition() {
