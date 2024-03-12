@@ -16,9 +16,8 @@ class GameController extends ChangeNotifier {
   bool get wasLastMoveAutomatic => _wasLastMoveAutomatic;
   int get remainingSeconds => _remainingSeconds;
 
-  GameController({required this.model}) {
-    _startTurnTimer();
-  }
+  GameController({required this.model});
+
   static GameController of(BuildContext context, {bool listen = false}) =>
       Provider.of<GameController>(context, listen: listen);
 
@@ -36,7 +35,7 @@ class GameController extends ChangeNotifier {
   }
 
   void markTile(int index) {
-    if (!model.gameOver && model.board[index].isEmpty) {
+    if (!model.gameOver && model.board[index].isEmpty && !model.readOnly) {
       model.previousBoards.add(List.from(model.board));
       model.board[index] =
           model.isPlayer1Turn ? model.player1Mark : model.player2Mark;
@@ -93,7 +92,7 @@ class GameController extends ChangeNotifier {
   }
 
   void _handleTimeUp() {
-    if (model.gameOver) {
+    if (model.gameOver && !model.readOnly) {
       _countdownTimer?.cancel();
 
       return;

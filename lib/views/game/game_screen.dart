@@ -22,6 +22,7 @@ class _GameScreenState extends State<GameScreen> {
 
     if (widget.initialModel != null) {
       gameController.model = widget.initialModel!;
+      gameController.model.readOnly = true;
     }
 
     gameController.onGameOver = () {
@@ -170,7 +171,9 @@ class _GameScreenState extends State<GameScreen> {
         int markOrder = gameController.model.markSequence.indexOf(index) + 1;
 
         return InkWell(
-          onTap: isReadOnly ? null : () => gameController.markTile(index),
+          onTap: isReadOnly
+              ? () => _showReadOnlyModal(context)
+              : () => gameController.markTile(index),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
@@ -215,14 +218,39 @@ class _GameScreenState extends State<GameScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          IconButton(
-            icon: const Icon(Icons.restart_alt_rounded),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.yellow,
+            ),
             onPressed: gameController.model.previousBoards.isNotEmpty
                 ? () => gameController.undo()
                 : null,
+            child: const Text('무르기'),
           ),
         ],
       ),
+    );
+  }
+
+  void _showReadOnlyModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Read-Only Mode'),
+          content: const Text(
+              'This game is in read-only mode and cannot be modified.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 

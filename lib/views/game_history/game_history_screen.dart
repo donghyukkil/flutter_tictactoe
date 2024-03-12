@@ -25,41 +25,62 @@ class GameHistoryScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: gameRecords.length,
-        itemBuilder: (context, index) {
-          final game = gameRecords[index];
-          return Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Card(
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 20.0),
-                title: Text('Game ${game['id']}'),
-                onTap: () {
-                  final int boardSize =
-                      game['boardSize'] != null ? game['boardSize'] as int : 3;
-                  final int winCondition = game['winCondition'] != null
-                      ? game['winCondition'] as int
-                      : 3;
+      body: Column(
+        children: [
+          const SizedBox(height: 50),
+          Expanded(
+            child: ListView.builder(
+              itemCount: gameRecords.length,
+              itemBuilder: (context, index) {
+                final game = gameRecords[index];
+                final String winner = game['winner'] ?? 'Draw';
+                final int boardSize = game['boardSize'] ?? 3;
+                final int winCondition = game['winCondition'] ?? 3;
+                final String player1Mark = game['player1Mark'] ?? 'X';
 
-                  final GameModel restoredModel = GameModel.fromHistory(
-                    boardSize: boardSize,
-                    winCondition: winCondition,
-                    board: List<String>.from(game['finalBoardState'] ?? []),
-                    markSequence: List<int>.from(game['markSequence'] ?? []),
-                    readOnly: true,
-                  );
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        GameScreen(initialModel: restoredModel),
-                  ));
-                },
-              ),
+                String winnerText = winner == 'Draw'
+                    ? 'Draw'
+                    : (winner == player1Mark ? 'Player 1' : 'Player 2');
+                final String gameInfo =
+                    'Game ${game['id']} - Winner: $winner ($winnerText)\n'
+                    'Board Size: $boardSize, Win Condition: $winCondition';
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  child: Card(
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 20.0),
+                      title: Text(gameInfo),
+                      onTap: () {
+                        final int boardSize = game['boardSize'] != null
+                            ? game['boardSize'] as int
+                            : 3;
+                        final int winCondition = game['winCondition'] != null
+                            ? game['winCondition'] as int
+                            : 3;
+
+                        final GameModel restoredModel = GameModel.fromHistory(
+                          boardSize: boardSize,
+                          winCondition: winCondition,
+                          board:
+                              List<String>.from(game['finalBoardState'] ?? []),
+                          markSequence:
+                              List<int>.from(game['markSequence'] ?? []),
+                          readOnly: true,
+                        );
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              GameScreen(initialModel: restoredModel),
+                        ));
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
