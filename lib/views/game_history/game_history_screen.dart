@@ -15,7 +15,7 @@ class GameHistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.yellow,
-        title: const Text('Recorded Games'),
+        title: const Text('저장된 게임'),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.home),
@@ -42,8 +42,8 @@ class GameHistoryScreen extends StatelessWidget {
                     ? 'Draw'
                     : (winner == player1Mark ? 'Player 1' : 'Player 2');
                 final String gameInfo =
-                    'Game ${game['id']} - Winner: $winner ($winnerText)\n'
-                    'Board Size: $boardSize, Win Condition: $winCondition';
+                    'Game ${game['id']} - 승자: $winner ($winnerText)'
+                    '보드 크기: $boardSize, 승리 조건: $winCondition';
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 16.0),
@@ -51,7 +51,10 @@ class GameHistoryScreen extends StatelessWidget {
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 16.0, horizontal: 20.0),
-                      title: Text(gameInfo),
+                      title: Text(
+                        gameInfo,
+                        style: const TextStyle(fontSize: 12),
+                      ),
                       onTap: () {
                         final int boardSize = game['boardSize'] != null
                             ? game['boardSize'] as int

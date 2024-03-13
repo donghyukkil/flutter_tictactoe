@@ -25,15 +25,15 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
     Colors.blue,
     Colors.red,
     Colors.green,
-    Colors.yellow,
+    Colors.purple,
   ];
-  final List<String> marks = ['X', 'O', '△', '■'];
+  final List<String> marks = ['X', 'O', '△', '□'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Game Settings'),
+        title: const Text('게임 세팅'),
         backgroundColor: Colors.yellow,
       ),
       body: SingleChildScrollView(
@@ -43,7 +43,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               height: 50,
             ),
             ListTile(
-              title: const Text("Board Size"),
+              title: const Text("보드 크기"),
               trailing: DropdownButton<int>(
                 value: boardSize,
                 onChanged: (int? newValue) {
@@ -62,7 +62,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               ),
             ),
             ListTile(
-              title: const Text("Win Condition"),
+              title: const Text("승리 조건"),
               trailing: DropdownButton<int>(
                 value: winCondition,
                 onChanged: (int? newValue) {
@@ -80,7 +80,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               ),
             ),
             ListTile(
-              title: const Text("First Player"),
+              title: const Text("순서 정하기"),
               trailing: DropdownButton<String>(
                 value: firstPlayer,
                 onChanged: (String? newValue) {
@@ -98,7 +98,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               ),
             ),
             ListTile(
-              title: const Text("Player 1 Mark"),
+              title: const Text("Player 1 마크"),
               trailing: DropdownButton<String>(
                 value: player1Mark,
                 onChanged: (String? newValue) {
@@ -115,7 +115,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               ),
             ),
             ListTile(
-              title: const Text("Player 1 Color"),
+              title: const Text("Player 1 색상"),
               trailing: DropdownButton<Color>(
                 value: player1Color,
                 onChanged: (Color? newValue) {
@@ -136,7 +136,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               ),
             ),
             ListTile(
-              title: const Text("Player 2 Mark"),
+              title: const Text("Player 2 마크"),
               trailing: DropdownButton<String>(
                 value: player2Mark,
                 onChanged: (String? newValue) {
@@ -153,7 +153,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               ),
             ),
             ListTile(
-              title: const Text("Player 2 Color"),
+              title: const Text("Player 2 색상"),
               trailing: DropdownButton<Color>(
                 value: player2Color,
                 onChanged: (Color? newValue) {
@@ -182,32 +182,66 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                 backgroundColor: Colors.yellow,
               ),
               onPressed: () {
-                GameModel gameModel = GameModel(
-                  boardSize: boardSize,
-                  winCondition: winCondition,
-                  player1Mark: player1Mark,
-                  player1Color: player1Color,
-                  player2Mark: player2Mark,
-                  player2Color: player2Color,
-                  firstPlayer: firstPlayer == 'Random'
-                      ? ['Player 1', 'Player 2'][Random().nextInt(2)]
-                      : firstPlayer,
-                );
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ChangeNotifierProvider<GameController>(
-                      create: (_) => GameController(model: gameModel),
-                      child: const GameScreen(),
+                if (_validateSettings()) {
+                  GameModel gameModel = GameModel(
+                    boardSize: boardSize,
+                    winCondition: winCondition,
+                    player1Mark: player1Mark,
+                    player1Color: player1Color,
+                    player2Mark: player2Mark,
+                    player2Color: player2Color,
+                    firstPlayer: firstPlayer == 'Random'
+                        ? ['Player 1', 'Player 2'][Random().nextInt(2)]
+                        : firstPlayer,
+                  );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ChangeNotifierProvider<GameController>(
+                        create: (_) => GameController(model: gameModel),
+                        child: const GameScreen(),
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
-              child: const Text('Start Game'),
+              child: const Text('게임 시작'),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  bool _validateSettings() {
+    if (player1Mark == player2Mark) {
+      _showValidationError('플레이어는 동일한 마크를 가질 수 없습니다.');
+      return false;
+    }
+    if (player1Color == player2Color) {
+      _showValidationError('플레이어는 동일한 색상을 가질 수 없습니다.');
+      return false;
+    }
+    return true;
+  }
+
+  void _showValidationError(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('유효성 검사 오류'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

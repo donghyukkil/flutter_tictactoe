@@ -150,7 +150,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget _buildRemainingTimeSection(GameController gameController) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text('Remaining Time: ${gameController.remainingSeconds} seconds',
+      child: Text('남은 시간: ${gameController.remainingSeconds} 초',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );
   }
@@ -238,9 +238,8 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Read-Only Mode'),
-          content: const Text(
-              'This game is in read-only mode and cannot be modified.'),
+          title: const Text('읽기 전용 모드'),
+          content: const Text('이 게임은 읽기 전용 모드이며 수정할 수 없습니다.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
