@@ -5,19 +5,21 @@ class GameModel {
   int boardSize;
   int winCondition;
   List<String> board;
+  bool gameOver = false;
+  String? winner;
+  bool readOnly = false;
+
   late bool isPlayer1Turn;
   String player1Mark;
   Color player1Color;
   String player2Mark;
   Color player2Color;
-  bool gameOver = false;
-  String? winner;
   int player1UndoCount = 3;
   int player2UndoCount = 3;
+
   List<List<String>> previousBoards = [];
   List<int> markSequence = [];
   List<bool> movePlayerSequence = [];
-  bool readOnly = false;
 
   GameModel({
     required this.boardSize,
@@ -60,24 +62,6 @@ class GameModel {
   }
 
   void checkWinCondition() {
-    bool hasWinningSequence(int startRow, int startCol, int dRow, int dCol) {
-      String firstCell = board[startRow * boardSize + startCol];
-      if (firstCell.isEmpty) {
-        return false;
-      }
-
-      for (int i = 1; i < winCondition; ++i) {
-        int row = startRow + dRow * i;
-        int col = startCol + dCol * i;
-
-        if (board[row * boardSize + col] != firstCell) {
-          return false;
-        }
-      }
-
-      return true;
-    }
-
     for (int row = 0; row < boardSize; ++row) {
       for (int col = 0; col < boardSize; ++col) {
         if (col <= boardSize - winCondition &&
@@ -102,5 +86,23 @@ class GameModel {
       gameOver = true;
       winner = 'Draw';
     }
+  }
+
+  bool hasWinningSequence(int startRow, int startCol, int dRow, int dCol) {
+    String firstCell = board[startRow * boardSize + startCol];
+    if (firstCell.isEmpty) {
+      return false;
+    }
+
+    for (int i = 1; i < winCondition; ++i) {
+      int row = startRow + dRow * i;
+      int col = startCol + dCol * i;
+
+      if (board[row * boardSize + col] != firstCell) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

@@ -10,12 +10,9 @@ class GameController extends ChangeNotifier {
   static const int turnDurationSeconds = 15;
   Timer? _countdownTimer;
   int _remainingSeconds = turnDurationSeconds;
-
-  bool _wasLastMoveAutomatic = false;
-  Function? onGameOver;
-
-  bool get wasLastMoveAutomatic => _wasLastMoveAutomatic;
   int get remainingSeconds => _remainingSeconds;
+
+  Function? onGameOver;
 
   GameController({required this.model});
 
@@ -84,23 +81,21 @@ class GameController extends ChangeNotifier {
   }
 
   void _startTurnTimer() {
-    _wasLastMoveAutomatic = false;
-    _remainingSeconds = turnDurationSeconds;
     _countdownTimer?.cancel();
+    _remainingSeconds = turnDurationSeconds;
 
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
         _remainingSeconds--;
         notifyListeners();
       } else {
-        _countdownTimer?.cancel();
         _handleTimeUp();
       }
     });
   }
 
   void _handleTimeUp() {
-    if (model.gameOver && !model.readOnly) {
+    if (model.gameOver || model.readOnly) {
       _countdownTimer?.cancel();
 
       return;
@@ -115,14 +110,9 @@ class GameController extends ChangeNotifier {
       int randomIndex = emptyIndices[rng.nextInt(emptyIndices.length)];
 
       markTile(randomIndex);
-    } else {
-      _wasLastMoveAutomatic = true;
     }
 
-    if (model.gameOver) {
-      _countdownTimer?.cancel();
-      notifyListeners();
-    } else {
+    if (!model.gameOver) {
       _startTurnTimer();
     }
   }
