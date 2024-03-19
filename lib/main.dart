@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './models/game_model.dart';
-import 'views/home/home_screen.dart';
-import './controllers/game_controller.dart';
-import './controllers/game_history_provider.dart';
+import 'package:flutter_tictactoe/views/home/home_screen.dart';
+import 'package:flutter_tictactoe/controllers/game_controller.dart';
+import 'package:flutter_tictactoe/controllers/game_history_provider.dart';
+import 'package:flutter_tictactoe/models/game_model.dart';
 
 void main() {
   runApp(const MyApp());

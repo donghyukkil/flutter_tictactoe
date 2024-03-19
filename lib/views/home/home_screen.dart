@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../game_settings/game_settings_screen.dart';
-import '../game_history/game_history_screen.dart';
+import 'package:flutter_tictactoe/views/game_settings/game_settings_screen.dart';
+import 'package:flutter_tictactoe/views/game_history/game_history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

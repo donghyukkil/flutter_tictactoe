@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/game_history_provider.dart';
-import '../game/game_screen.dart';
-import '../../models/game_model.dart';
+import 'package:flutter_tictactoe/controllers/game_history_provider.dart';
+import 'package:flutter_tictactoe/views/game/game_screen.dart';
+import 'package:flutter_tictactoe/models/game_model.dart';
 
 class GameHistoryScreen extends StatelessWidget {
   const GameHistoryScreen({Key? key}) : super(key: key);
@@ -37,13 +37,13 @@ class GameHistoryScreen extends StatelessWidget {
                 final int boardSize = game['boardSize'] ?? 3;
                 final int winCondition = game['winCondition'] ?? 3;
                 final String player1Mark = game['player1Mark'] ?? 'X';
-
                 String winnerText = winner == 'Draw'
                     ? 'Draw'
                     : (winner == player1Mark ? 'Player 1' : 'Player 2');
                 final String gameInfo =
                     'Game ${game['id']} - 승자: $winner ($winnerText)'
                     '보드 크기: $boardSize, 승리 조건: $winCondition';
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 16.0),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/game_controller.dart';
-import '../../controllers/game_history_provider.dart';
-import '../../models/game_model.dart';
+import 'package:flutter_tictactoe/controllers/game_controller.dart';
+import 'package:flutter_tictactoe/controllers/game_history_provider.dart';
+import 'package:flutter_tictactoe/models/game_model.dart';
 
 class GameScreen extends StatefulWidget {
   final GameModel? initialModel;

@@ -1,16 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/material.dart';
 
-import '../models/game_model.dart';
+import 'package:flutter_tictactoe/models/game_model.dart';
 
 class GameController extends ChangeNotifier {
   GameModel model;
-  Timer? _countdownTimer;
+
   static const int turnDurationSeconds = 15;
-  bool _wasLastMoveAutomatic = false;
+  Timer? _countdownTimer;
   int _remainingSeconds = turnDurationSeconds;
+
+  bool _wasLastMoveAutomatic = false;
   Function? onGameOver;
 
   bool get wasLastMoveAutomatic => _wasLastMoveAutomatic;
@@ -18,20 +19,10 @@ class GameController extends ChangeNotifier {
 
   GameController({required this.model});
 
-  static GameController of(BuildContext context, {bool listen = false}) =>
-      Provider.of<GameController>(context, listen: listen);
-
-  static GameModel defaultModel() => GameModel.defaultModel();
-
   @override
   void dispose() {
     _countdownTimer?.cancel();
     super.dispose();
-  }
-
-  void resetLastMoveAutomaticFlag() {
-    _wasLastMoveAutomatic = false;
-    notifyListeners();
   }
 
   void markTile(int index) {
@@ -41,6 +32,7 @@ class GameController extends ChangeNotifier {
           model.isPlayer1Turn ? model.player1Mark : model.player2Mark;
       model.markSequence.add(index);
       model.movePlayerSequence.add(model.isPlayer1Turn);
+
       model.checkWinCondition();
       model.isPlayer1Turn = !model.isPlayer1Turn;
 
@@ -73,6 +65,7 @@ class GameController extends ChangeNotifier {
             (!wasPlayer1Turn && model.player2UndoCount > 0)) {
           model.board = model.previousBoards.removeLast();
           model.markSequence.removeLast();
+
           if (wasPlayer1Turn) {
             model.player1UndoCount--;
           } else {
@@ -80,7 +73,6 @@ class GameController extends ChangeNotifier {
           }
 
           model.isPlayer1Turn = wasPlayer1Turn;
-
           model.gameOver = false;
           model.winner = null;
 
@@ -121,6 +113,7 @@ class GameController extends ChangeNotifier {
     if (emptyIndices.isNotEmpty) {
       Random rng = Random();
       int randomIndex = emptyIndices[rng.nextInt(emptyIndices.length)];
+
       markTile(randomIndex);
     } else {
       _wasLastMoveAutomatic = true;

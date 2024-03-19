@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
 
 class GameModel {
   int boardSize;
@@ -69,6 +69,7 @@ class GameModel {
       for (int i = 1; i < winCondition; ++i) {
         int row = startRow + dRow * i;
         int col = startCol + dCol * i;
+
         if (board[row * boardSize + col] != firstCell) {
           return false;
         }
@@ -91,6 +92,7 @@ class GameModel {
                 hasWinningSequence(row, col, 1, -1)) {
           gameOver = true;
           winner = board[row * boardSize + col];
+
           return;
         }
       }

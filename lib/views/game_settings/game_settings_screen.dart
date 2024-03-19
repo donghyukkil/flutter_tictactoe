@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../game/game_screen.dart';
-import '../../models/game_model.dart';
-import '../../controllers/game_controller.dart';
+import 'package:flutter_tictactoe/views/game/game_screen.dart';
+import 'package:flutter_tictactoe/models/game_model.dart';
+import 'package:flutter_tictactoe/controllers/game_controller.dart';
 
 class GameSettingsScreen extends StatefulWidget {
   const GameSettingsScreen({Key? key}) : super(key: key);
@@ -21,13 +21,13 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
   String player2Mark = 'O';
   Color player2Color = Colors.red;
   String firstPlayer = 'Random';
-  final List<Color> colors = [
+  static const List<Color> colors = [
     Colors.blue,
     Colors.red,
     Colors.green,
     Colors.purple,
   ];
-  final List<String> marks = ['X', 'O', '△', '□'];
+  static const List<String> marks = ['X', 'O', '△', '□'];
 
   @override
   Widget build(BuildContext context) {
@@ -216,10 +216,12 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
   bool _validateSettings() {
     if (player1Mark == player2Mark) {
       _showValidationError('플레이어는 동일한 마크를 가질 수 없습니다.');
+
       return false;
     }
     if (player1Color == player2Color) {
       _showValidationError('플레이어는 동일한 색상을 가질 수 없습니다.');
+
       return false;
     }
     return true;
